@@ -21,9 +21,6 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: 最大化构建空间
-      uses: actions/checkout@main
-      
     - name: 初始化环境并显示系统信息
       env:
         DEBIAN_FRONTEND: noninteractive
