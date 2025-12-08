@@ -14,7 +14,7 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: immortalwrt
+  OPENWRT_NAME: openwrt
   OPENWRT_NAME1: marvell
 
 jobs:
