@@ -119,8 +119,8 @@ jobs:
       id: organize
       if: ${{ env.UPLOAD_FIRMWARE == 'true' && !cancelled() }}
       run: |
-        cd openwrt/bin/targets/rockchip/armv8
-        rm -rf packages *.buildinfo *.manifest *.json
+        cd openwrt/bin/targets/mvebu/cortexa72
+        rm -rf packages *.buildinfo *.manifest *.json *.rootfs.tar.gz *.ext4-sdcard.img.gz *.kernel.bin
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
         
