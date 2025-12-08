@@ -22,15 +22,8 @@ jobs:
 
     steps:
     - name: 最大化构建空间
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 512
-        swap-size-mb: 1024
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-        remove-codeql: 'true'
-
+      uses: actions/checkout@main
+      
     - name: 初始化环境并显示系统信息
       env:
         DEBIAN_FRONTEND: noninteractive
