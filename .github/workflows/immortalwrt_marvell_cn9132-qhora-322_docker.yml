@@ -142,7 +142,7 @@ jobs:
       if: ${{ env.UPLOAD_FIRMWARE == 'true' && !cancelled() }}
       run: |
         cd openwrt/bin/targets/mvebu/cortexa72
-        rm -rf packages *.buildinfo *.manifest *.json *.rootfs.tar.gz *.ext4-sdcard.img.gz
+        rm -rf packages *.buildinfo *.manifest *.json *-rootfs.tar.gz *.ext4-sdcard.img.gz
         for file in immortalwrt-*-*.img.gz; do
             mv "$file" "docker-$file"
         done
