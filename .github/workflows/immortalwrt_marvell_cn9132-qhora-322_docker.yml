@@ -1,4 +1,4 @@
-name: immortalwrt_marvell_cn9132-qhora-322
+name: immortalwrt_marvell_cn9132-qhora-322_docker
 
 on:
   schedule:
