@@ -19,17 +19,12 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: 初始化环境并显示系统信息
-      env:
-        DEBIAN_FRONTEND: noninteractive
+    - name: Check out the project branch
+      uses: actions/checkout@main
+      
+    - name: Download firmware source code
       run: |
-        chmod +x *.sh
-        $GITHUB_WORKSPACE/system-Information.sh
-        
-    - name: 下载固件源码
-      run: |
-        rm -rf openwrt
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
 
     - name: 更新并安装 feeds
       working-directory: ./openwrt
