@@ -18,17 +18,7 @@ jobs:
   build:
     runs-on: self-hosted
 
-    steps:
-    - name: 最大化构建空间
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 512
-        swap-size-mb: 1024
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-        remove-codeql: 'true'
-        
+    steps:      
     - name: 签出项目分支
       uses: actions/checkout@main
       with:
