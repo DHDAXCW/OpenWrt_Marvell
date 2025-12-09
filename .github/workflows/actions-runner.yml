@@ -19,9 +19,6 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: Check out the project branch
-      uses: actions/checkout@main
-      
     - name: Download firmware source code
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
