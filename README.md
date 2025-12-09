@@ -3,6 +3,7 @@
 
 
 ### 固件默认配置
+- 默认eth0(10G网口1)和eth2(2.5G网口1)桥接作为WAN接口
 - 用户名：`root` 密码：`password` 管理IP：`192.168.11.1`
 - 下载地址：https://github.com/DHDAXCW/OpenWrt_Marvell/releases 对应 Tag 标签内下载固件
 - 电报交流群：https://t.me/armopenwrt
@@ -13,7 +14,8 @@
 3. 集成在线用户插件，可查看所有在线用户 IP 地址与实时速率等
 4. 集成部分常用有线、无线、3G / 4G /5G 网卡驱动 可在issues提支持网卡，看本人能力了。。。
 5. 支持在线更新，从2024.03.27之后就能通过后台升级
-6. 特调优化irq中断分配网卡绑定cpu
+<img width="2040" height="1984" alt="e74733eb-1e51-4a86-a225-b2ae905528d8" src="https://github.com/user-attachments/assets/9e2045e4-63ae-4b3a-91f0-ed9f5b2e8321" />
+<img width="2604" height="1574" alt="f0ae96afd82202a460766be472eb63b7" src="https://github.com/user-attachments/assets/7a004b12-7116-40ec-8a38-bd476d586fb7" />
 
 
 ### 特别提示 [![](https://img.shields.io/badge/-个人免责声明-FFFFFF.svg)](#特别提示-)
