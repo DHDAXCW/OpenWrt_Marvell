@@ -24,8 +24,6 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        git clone https://github.com/DHDAXCW/OpenWrt_Marvell
-        mv OpenWrt_Marvell/* ~/actions-runner/_work/OpenWrt_Marvell/*
         chmod +x *.sh
         $GITHUB_WORKSPACE/system-Information.sh
 
