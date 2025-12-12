@@ -1,4 +1,4 @@
-name: Marvell CN9130 QHora-321 Build Docker
+name: Marvell CN9131 QHora-321 Build Docker
 
 on:
   schedule:
