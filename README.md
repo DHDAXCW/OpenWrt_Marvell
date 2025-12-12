@@ -14,6 +14,32 @@
 3. 集成在线用户插件，可查看所有在线用户 IP 地址与实时速率等
 4. 集成部分常用有线、无线、3G / 4G /5G 网卡驱动 可在issues提支持网卡，看本人能力了。。。
 5. 支持在线更新，从2024.03.27之后就能通过后台升级
+
+### 刷机方法
+首先用 rufus 将一个U盘格式为 fat32 的单一分区，然后把附件的几个文件复制进去 U 盘根目录
+
+然后 TTL 连上机器，针脚定义从左到右依次为Tx、Vcc、Rx、Gnd。只需要连接Tx、Rx、Gnd即可
+
+使用波特率115200连接TTL线，插上 U盘到内置的 USB 口，给QHora-32x上电，快速狂按 ctrl+c 中断启动进入 Uboot
+
+从USB启动临时OP系统( QNAP-321 为例子)：
+```bash
+usb start
+fatload usb 0:1 0x6500000 immortalwrt-mvebu-cortexa72-qnap_qhora-321-initramfs-kernel.bin
+fatload usb 0:1 0x6000000 cn9130-qhora-321.dtb
+booti 0x6500000 - 0x6000000
+```
+如果是 QNAP-322
+```bash
+usb start
+fatload usb 0:1 0x6500000 immortalwrt-mvebu-cortexa72-qnap_qhora-322-initramfs-kernel.bin
+fatload usb 0:1 0x6000000 cn9132-qhora-322.dtb
+booti 0x6500000 - 0x6000000
+```
+- 这时候就顺利启动进入临时 OP 系统了，默认IP 是 192.168.11.1， root/无
+- 下载immortalwrt-mvebu-cortexa72-qnap_qhora-322-squashfs-sdcard.img.gz 解压img，
+- 进系统--备份与更新--更新固件，选择immortalwrt-mvebu-cortexa72-qnap_qhora-322-squashfs-sdcard.img，打勾强制更新，不保存配置，进行更新，刷好了后就完成，以后就可以直接通过 Web 升级了
+
 <img width="2040" height="1984" alt="e74733eb-1e51-4a86-a225-b2ae905528d8" src="https://github.com/user-attachments/assets/9e2045e4-63ae-4b3a-91f0-ed9f5b2e8321" />
 <img width="2604" height="1574" alt="f0ae96afd82202a460766be472eb63b7" src="https://github.com/user-attachments/assets/7a004b12-7116-40ec-8a38-bd476d586fb7" />
 
