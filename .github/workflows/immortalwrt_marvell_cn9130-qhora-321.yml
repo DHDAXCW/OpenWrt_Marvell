@@ -1,4 +1,4 @@
-name: Marvell CN9132 QHora-321 Build
+name: Marvell CN9130 QHora-321 Build
 
 on:
   schedule:
