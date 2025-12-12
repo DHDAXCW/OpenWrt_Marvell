@@ -26,7 +26,7 @@
 ```bash
 usb start
 fatload usb 0:1 0x6500000 immortalwrt-mvebu-cortexa72-qnap_qhora-321-initramfs-kernel.bin
-fatload usb 0:1 0x6000000 cn9130-qhora-321.dtb
+fatload usb 0:1 0x6000000 cn9131-qhora-321.dtb
 booti 0x6500000 - 0x6000000
 ```
 如果是 QNAP-322
@@ -49,7 +49,7 @@ qhora-322执行下面命令
 setenv bootcmd 'ext4load mmc 0:1 0x6500000 Image; ext4load mmc 0:1 0x6000000 cn9132-qhora-322.dtb; setenv bootargs $console cpuidle.off=1; booti 0x6500000 - 0x6000000'; saveenv; reset
 
 qhora-321执行下面命令
-setenv bootcmd 'ext4load mmc 0:1 0x6500000 Image; ext4load mmc 0:1 0x6000000 cn9130-qhora-321.dtb; setenv bootargs $console cpuidle.off=1; booti 0x6500000 - 0x6000000'; saveenv; reset
+setenv bootcmd 'ext4load mmc 0:1 0x6500000 Image; ext4load mmc 0:1 0x6000000 cn9131-qhora-321.dtb; setenv bootargs $console cpuidle.off=1; booti 0x6500000 - 0x6000000'; saveenv; reset
 ```
 ### 特别提示 [![](https://img.shields.io/badge/-个人免责声明-FFFFFF.svg)](#特别提示-)
 
