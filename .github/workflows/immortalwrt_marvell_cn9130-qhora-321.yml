@@ -1,0 +1,165 @@
+name: Marvell CN9132 QHora-321 Build
+
+on:
+  schedule:
+    - cron: 0 16 * * *
+  workflow_dispatch:
+
+env:
+  REPO_URL: https://github.com/DHDAXCW/immortalwrt
+  REPO_BRANCH: openwrt-24.10
+  CONFIG_FILE: marvell_config/defconfig
+  DIY_P1_SH: build-prep-defaults.sh
+  DIY_P2_SH: setup-packages.sh
+  UPLOAD_FIRMWARE: true
+  UPLOAD_RELEASE: true
+  TZ: Asia/Shanghai
+  OPENWRT_NAME1: marvell
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 最大化构建空间
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 512
+        swap-size-mb: 1024
+        remove-dotnet: 'true'
+        remove-android: 'true'
+        remove-haskell: 'true'
+        remove-codeql: 'true'
+        
+    - name: 签出项目分支
+      uses: actions/checkout@main
+      with:
+          fetch-depth: 0
+
+    - name: 清理构建缓存
+      run: |
+        echo "Cleaning previous build artifacts and caches..."
+        sudo rm -rf $GITHUB_WORKSPACE/openwrt || true
+        sudo rm -rf $RUNNER_TEMP/* || true
+        sudo rm -rf $RUNNER_TOOL_CACHE/* || true
+        sudo apt-get -qq clean || true
+        sudo rm -rf /var/lib/apt/lists/* || true
+        rm -rf ~/.cache/* || true
+        echo "Cache cleanup complete."
+          
+    - name: 初始化编译环境
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        ( sudo -E apt-get -qq update
+        sudo apt install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
+            bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib \
+            g++-multilib git gnutls-dev gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev \
+            libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses-dev libpython3-dev \
+            libreadline-dev libssl-dev libtool libyaml-dev libz-dev lld llvm lrzsz mkisofs msmtp nano \
+            ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils \
+            python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
+            upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
+        sudo -E apt-get -qq purge azure-cli ghc* zulu* hhvm llvm* firefox powershell openjdk* dotnet* google* mysql* php* android* rename speedtest-cli
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean ) &
+        sudo timedatectl set-timezone "$TZ"
+        
+    - name: 初始化环境并显示系统信息
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        chmod +x *.sh
+        $GITHUB_WORKSPACE/system-Information.sh
+        
+    - name: 下载固件源码
+      run: |
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+
+    - name: 更新并安装 feeds
+      working-directory: ./openwrt
+      run: |
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        
+    - name: 加载 feeds.conf.default
+      run: |
+        chmod +x *.sh
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P1_SH
+
+    - name: 加载配置
+      run: |
+        [ -e "$CONFIG_FILE" ] && cat "$CONFIG_FILE" > openwrt/.config
+        chmod +x *.sh && cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P2_SH
+
+    - name: 下载安装包
+      id: package
+      run: |
+        cd openwrt
+        echo '
+        CONFIG_TARGET_mvebu=y
+        CONFIG_TARGET_mvebu_cortexa72=y
+        CONFIG_TARGET_mvebu_cortexa72_DEVICE_qnap_qhora-321=y
+        CONFIG_HAS_SUBTARGETS=y
+        CONFIG_HAS_DEVICES=y
+        CONFIG_TARGET_BOARD="mvebu"
+        CONFIG_TARGET_SUBTARGET="cortexa72"
+        CONFIG_TARGET_PROFILE="DEVICE_qnap_qhora-321"
+        CONFIG_TARGET_ARCH_PACKAGES="aarch64_cortex-a72"
+        CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe"
+        CONFIG_CPU_TYPE="cortex-a72"
+        CONFIG_LINUX_6_6=y
+        ' >> .config
+        make defconfig
+        make download -j$(nproc)
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+
+    - name: 编译固件
+      id: compile
+      run: |
+        cd openwrt
+        echo -e "$(nproc) thread compile"
+        make -j$(nproc) || make -j1 || make -j1 V=s
+        echo "date1=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+        echo "date2=$(date "+%Y年%m月%d日")" >> $GITHUB_ENV
+        echo "status=success" >> $GITHUB_OUTPUT
+
+    - name: 整理并重命名文件
+      id: organize
+      if: ${{ env.UPLOAD_FIRMWARE == 'true' && !cancelled() }}
+      run: |
+        cd openwrt/bin/targets/mvebu/cortexa72
+        rm -rf packages *.buildinfo *.manifest *.json *-rootfs.tar.gz *.ext4-sdcard.img.gz
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        echo "status=success" >> $GITHUB_OUTPUT
+        
+    - name: 上传固件到 GitHub
+      uses: actions/upload-artifact@main
+      if: steps.organize.outputs.status == 'success' && !cancelled()
+      with:
+        name: ${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.OPENWRT_NAME1 }}
+        path: ${{ env.FIRMWARE }}
+
+    - name: 生成发布标签
+      id: tag
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        echo "release_tag=${{ env.date2 }}" >> $GITHUB_OUTPUT
+        touch release.txt
+        echo "📥 固件下载" >> release.txt
+        echo "status=success" >> $GITHUB_OUTPUT
+        
+    - name: 发布到 Release
+      uses: softprops/action-gh-release@v1
+      if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: ${{ env.FIRMWARE }}/*
+        name: ${{ env.date3 }}
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
