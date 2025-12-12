@@ -17,7 +17,14 @@
 <img width="2040" height="1984" alt="e74733eb-1e51-4a86-a225-b2ae905528d8" src="https://github.com/user-attachments/assets/9e2045e4-63ae-4b3a-91f0-ed9f5b2e8321" />
 <img width="2604" height="1574" alt="f0ae96afd82202a460766be472eb63b7" src="https://github.com/user-attachments/assets/7a004b12-7116-40ec-8a38-bd476d586fb7" />
 
+### 如果在刷机过程中遇到插入nvme导致kernel无法加载，使用ttl在uboot模式下可执行以下命令解决此问题
+```bash
+qhora-322执行下面命令
+setenv bootcmd 'ext4load mmc 0:1 0x6500000 Image; ext4load mmc 0:1 0x6000000 cn9132-qhora-322.dtb; setenv bootargs $console cpuidle.off=1; booti 0x6500000 - 0x6000000'; saveenv; reset
 
+qhora-321执行下面命令
+setenv bootcmd 'ext4load mmc 0:1 0x6500000 Image; ext4load mmc 0:1 0x6000000 cn9130-qhora-321.dtb; setenv bootargs $console cpuidle.off=1; booti 0x6500000 - 0x6000000'; saveenv; reset
+```
 ### 特别提示 [![](https://img.shields.io/badge/-个人免责声明-FFFFFF.svg)](#特别提示-)
 
 - **因精力有限不提供任何技术支持和教程等相关问题解答，不保证完全无 BUG！**
