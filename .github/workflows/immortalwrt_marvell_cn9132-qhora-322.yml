@@ -132,6 +132,7 @@ jobs:
       id: organize
       if: ${{ env.UPLOAD_FIRMWARE == 'true' && !cancelled() }}
       run: |
+        cp -r openwrt/build_dir/target-aarch64_cortex-a72_musl/linux-mvebu_cortexa72/image-cn913*.dtb openwrt/bin/targets/mvebu/cortexa72
         cd openwrt/bin/targets/mvebu/cortexa72
         rm -rf packages *.buildinfo *.manifest *.json *-rootfs.tar.gz *.ext4-sdcard.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
