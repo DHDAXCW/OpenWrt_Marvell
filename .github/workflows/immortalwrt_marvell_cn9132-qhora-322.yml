@@ -1,8 +1,6 @@
 name: Marvell CN9132 QHora-322 Build
 
 on:
-  schedule:
-    - cron: 0 16 * * *
   workflow_dispatch:
 
 env:
