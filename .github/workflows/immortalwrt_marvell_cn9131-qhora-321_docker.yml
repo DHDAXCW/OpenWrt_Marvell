@@ -1,8 +1,6 @@
 name: Marvell CN9131 QHora-321 Build Docker
 
 on:
-  schedule:
-    - cron: 0 16 * * *
   workflow_dispatch:
 
 env:
